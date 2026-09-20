@@ -120,3 +120,55 @@ google_compute_subnetwork.publica: Creation complete after 11s [id=projects/proj
 
 Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 ```
+
+## 2. Variables y salidas
+
+Salida de terraform plan:
+
+```bash
+─ ❯❯ terraform plan
+google_compute_network.vpc: Refreshing state... [id=projects/project-ded4209f-94f1-47b0-a63/global/networks/perez-vpc]
+google_compute_subnetwork.publica: Refreshing state... [id=projects/project-ded4209f-94f1-47b0-a63/regions/us-central1/subnetworks/perez-sub-publica]
+
+Changes to Outputs:
+  + red            = "perez-vpc"
+  + subred_publica = "https://www.googleapis.com/compute/v1/projects/project-ded4209f-94f1-47b0-a63/regions/us-central1/subnetworks/perez-sub-publica"
+
+You can apply this plan to save these new output values to the Terraform state, without changing any real infrastructure.
+```
+
+Salida de terraform apply:
+
+```bash
+╰─ ❯❯ terraform apply 
+google_compute_network.vpc: Refreshing state... [id=projects/project-ded4209f-94f1-47b0-a63/global/networks/perez-vpc]
+google_compute_subnetwork.publica: Refreshing state... [id=projects/project-ded4209f-94f1-47b0-a63/regions/us-central1/subnetworks/perez-sub-publica]
+
+Changes to Outputs:
+  + red            = "perez-vpc"
+  + subred_publica = "https://www.googleapis.com/compute/v1/projects/project-ded4209f-94f1-47b0-a63/regions/us-central1/subnetworks/perez-sub-publica"
+
+You can apply this plan to save these new output values to the Terraform state, without changing any real infrastructure.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+red = "perez-vpc"
+subred_publica = "https://www.googleapis.com/compute/v1/projects/project-ded4209f-94f1-47b0-a63/regions/us-central1/subnetworks/perez-sub-publica"
+```
+
+Y terraform output
+
+```bash
+╰─ ❯❯ terraform output
+red = "perez-vpc"
+subred_publica = "https://www.googleapis.com/compute/v1/projects/project-ded4209f-94f1-47b0-a63/regions/us-central1/subnetworks/perez-sub-publica"
+```
