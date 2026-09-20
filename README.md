@@ -308,3 +308,237 @@ subred_publica = "https://www.googleapis.com/compute/v1/projects/project-ded4209
 
 curl: (28) Connection timed out after 8002 milliseconds
 ```
+
+## 4. Las puertas
+
+Acceso desde el navegador:
+
+![App abierta desde el navegador](assets/fase_4_navegador.png)
+
+Tabla de reglas de firewall:
+
+![Tabla de la consola de GCP sobre reglas de firewall](assets/fase_4_tabla_firewall.png)
+
+Y output del proceso completo hasta el ssh a la instancia (le cambié el nombre al tag en este punto para que fuera más descriptivo, por eso el change de terraform):
+
+```bash
+╰─ ❯❯ terraform plan
+google_compute_network.vpc: Refreshing state... [id=projects/project-ded4209f-94f1-47b0-a63/global/networks/perez-vpc]
+google_compute_subnetwork.publica: Refreshing state... [id=projects/project-ded4209f-94f1-47b0-a63/regions/us-central1/subnetworks/perez-sub-publica]
+google_compute_instance.app: Refreshing state... [id=projects/project-ded4209f-94f1-47b0-a63/zones/us-central1-a/instances/perez-app]
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # google_compute_firewall.app_http will be created
+  + resource "google_compute_firewall" "app_http" {
+      + creation_timestamp = (known after apply)
+      + deletion_policy    = "DELETE"
+      + destination_ranges = (known after apply)
+      + direction          = (known after apply)
+      + enable_logging     = (known after apply)
+      + id                 = (known after apply)
+      + name               = "perez-permitir-http"
+      + network            = "perez-vpc"
+      + priority           = 1000
+      + project            = "project-ded4209f-94f1-47b0-a63"
+      + self_link          = (known after apply)
+      + source_ranges      = [
+          + "0.0.0.0/0",
+        ]
+      + target_tags        = [
+          + "practica-3-web-server-http",
+        ]
+
+      + allow {
+          + ports    = [
+              + "80",
+            ]
+          + protocol = "tcp"
+        }
+    }
+
+  # google_compute_firewall.ssh_iap will be created
+  + resource "google_compute_firewall" "ssh_iap" {
+      + creation_timestamp = (known after apply)
+      + deletion_policy    = "DELETE"
+      + destination_ranges = (known after apply)
+      + direction          = (known after apply)
+      + enable_logging     = (known after apply)
+      + id                 = (known after apply)
+      + name               = "perez-permitir-ssh-iap"
+      + network            = "perez-vpc"
+      + priority           = 1000
+      + project            = "project-ded4209f-94f1-47b0-a63"
+      + self_link          = (known after apply)
+      + source_ranges      = [
+          + "35.235.240.0/20",
+        ]
+      + target_tags        = [
+          + "practica-3-web-server-http",
+        ]
+
+      + allow {
+          + ports    = [
+              + "22",
+            ]
+          + protocol = "tcp"
+        }
+    }
+
+  # google_compute_instance.app will be updated in-place
+  ~ resource "google_compute_instance" "app" {
+        id                         = "projects/project-ded4209f-94f1-47b0-a63/zones/us-central1-a/instances/perez-app"
+        name                       = "perez-app"
+      ~ tags                       = [
+          - "practica-3",
+          + "practica-3-web-server-http",
+        ]
+        # (25 unchanged attributes hidden)
+
+        # (4 unchanged blocks hidden)
+    }
+
+Plan: 2 to add, 1 to change, 0 to destroy.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't guarantee to take exactly these actions if you run "terraform apply" now.
+
+╭─anorakteam   󰉖 ~/practica-3-red                                                                                                                     ( main)  ?1
+╰─ ❯❯ terraform apply
+google_compute_network.vpc: Refreshing state... [id=projects/project-ded4209f-94f1-47b0-a63/global/networks/perez-vpc]
+google_compute_subnetwork.publica: Refreshing state... [id=projects/project-ded4209f-94f1-47b0-a63/regions/us-central1/subnetworks/perez-sub-publica]
+google_compute_instance.app: Refreshing state... [id=projects/project-ded4209f-94f1-47b0-a63/zones/us-central1-a/instances/perez-app]
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # google_compute_firewall.app_http will be created
+  + resource "google_compute_firewall" "app_http" {
+      + creation_timestamp = (known after apply)
+      + deletion_policy    = "DELETE"
+      + destination_ranges = (known after apply)
+      + direction          = (known after apply)
+      + enable_logging     = (known after apply)
+      + id                 = (known after apply)
+      + name               = "perez-permitir-http"
+      + network            = "perez-vpc"
+      + priority           = 1000
+      + project            = "project-ded4209f-94f1-47b0-a63"
+      + self_link          = (known after apply)
+      + source_ranges      = [
+          + "0.0.0.0/0",
+        ]
+      + target_tags        = [
+          + "practica-3-web-server-http",
+        ]
+
+      + allow {
+          + ports    = [
+              + "80",
+            ]
+          + protocol = "tcp"
+        }
+    }
+
+  # google_compute_firewall.ssh_iap will be created
+  + resource "google_compute_firewall" "ssh_iap" {
+      + creation_timestamp = (known after apply)
+      + deletion_policy    = "DELETE"
+      + destination_ranges = (known after apply)
+      + direction          = (known after apply)
+      + enable_logging     = (known after apply)
+      + id                 = (known after apply)
+      + name               = "perez-permitir-ssh-iap"
+      + network            = "perez-vpc"
+      + priority           = 1000
+      + project            = "project-ded4209f-94f1-47b0-a63"
+      + self_link          = (known after apply)
+      + source_ranges      = [
+          + "35.235.240.0/20",
+        ]
+      + target_tags        = [
+          + "practica-3-web-server-http",
+        ]
+
+      + allow {
+          + ports    = [
+              + "22",
+            ]
+          + protocol = "tcp"
+        }
+    }
+
+  # google_compute_instance.app will be updated in-place
+  ~ resource "google_compute_instance" "app" {
+        id                         = "projects/project-ded4209f-94f1-47b0-a63/zones/us-central1-a/instances/perez-app"
+        name                       = "perez-app"
+      ~ tags                       = [
+          - "practica-3",
+          + "practica-3-web-server-http",
+        ]
+        # (25 unchanged attributes hidden)
+
+        # (4 unchanged blocks hidden)
+    }
+
+Plan: 2 to add, 1 to change, 0 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+google_compute_firewall.app_http: Creating...
+google_compute_firewall.ssh_iap: Creating...
+google_compute_instance.app: Modifying... [id=projects/project-ded4209f-94f1-47b0-a63/zones/us-central1-a/instances/perez-app]
+google_compute_firewall.app_http: Still creating... [00m10s elapsed]
+google_compute_firewall.ssh_iap: Still creating... [00m10s elapsed]
+google_compute_instance.app: Still modifying... [id=projects/project-ded4209f-94f1-47b0-a63/zones/us-central1-a/instances/perez-app, 00m10s elapsed]
+google_compute_firewall.ssh_iap: Creation complete after 11s [id=projects/project-ded4209f-94f1-47b0-a63/global/firewalls/perez-permitir-ssh-iap]
+google_compute_firewall.app_http: Creation complete after 11s [id=projects/project-ded4209f-94f1-47b0-a63/global/firewalls/perez-permitir-http]
+google_compute_instance.app: Modifications complete after 11s [id=projects/project-ded4209f-94f1-47b0-a63/zones/us-central1-a/instances/perez-app]
+
+Apply complete! Resources: 2 added, 1 changed, 0 destroyed.
+
+Outputs:
+
+ip_publica = "136.112.107.44"
+red = "perez-vpc"
+subred_publica = "https://www.googleapis.com/compute/v1/projects/project-ded4209f-94f1-47b0-a63/regions/us-central1/subnetworks/perez-sub-publica"
+
+╭─anorakteam   󰉖 ~/practica-3-red                                                                                                                     ( main)  ?1
+╰─ ❯❯ curl -m 8 http://136.112.107.44
+<h1>1152375</h1>
+<p>Servidor de aplicación. IP interna: 10.10.1.2</p>
+
+╭─anorakteam   󰉖 ~/practica-3-red                                                                                                                     ( main)  ?1
+╰─ ❯❯ gcloud compute ssh perez-app --tunnel-through-iap
+Did you mean zone [us-east1-c] for instance: [perez-app] (Y/n)?  n
+
+No zone specified. Using zone [us-central1-a] for instance: [perez-app].
+WARNING: 
+
+To increase the performance of the tunnel, consider installing NumPy. For instructions,
+please see https://cloud.google.com/iap/docs/using-tcp-forwarding#increasing_the_tcp_upload_bandwidth
+
+Warning: Permanently added 'compute.5680128671849749280' (ED25519) to the list of known hosts.
+Linux perez-app 6.1.0-53-cloud-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.187-1 (2026-09-07) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+anorakteam@perez-app:~$ 
+```
+
