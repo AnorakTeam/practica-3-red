@@ -542,3 +542,44 @@ permitted by applicable law.
 anorakteam@perez-app:~$ 
 ```
 
+## 5. Reproducir desde cero
+
+Output de terraform destroy:
+
+```bash
+Destroy complete! Resources: 5 destroyed.
+```
+
+Output del listado de recursos en ese instante:
+
+```bash
+gcloud compute instances list && gcloud compute networks list
+Listed 0 items.
+NAME: default
+SUBNET_MODE: AUTO
+BGP_ROUTING_MODE: REGIONAL
+IPV4_RANGE: 
+GATEWAY_IPV4: 
+INTERNAL_IPV6_RANGE:
+```
+
+Y el final del output de terraform apply:
+
+```bash
+Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+ip_publica = "34.29.146.16"
+red = "perez-vpc"
+subred_publica = "https://www.googleapis.com/compute/v1/projects/project-ded4209f-94f1-47b0-a63/regions/us-central1/subnetworks/perez-sub-publica"
+```
+
+Y un curl rapido para comprobar que la app funciona:
+
+```bash
+─ ❯❯ curl -m 8 http://34.29.146.16
+<h1>1152375</h1>
+<p>Servidor de aplicación. IP interna: 10.10.1.2</p>
+```
+
