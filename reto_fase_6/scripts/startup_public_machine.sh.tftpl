@@ -1,0 +1,14 @@
+#!/bin/bash
+apt-get update -y
+apt-get install -y nginx curl
+
+# Consulta al backend privado usando la IP que Terraform inyectó
+DATO_PRIVADO=$(curl -s --connect-timeout 5 http://${ip_privada}:8080)
+
+cat > /var/www/html/index.html <<HTML
+<h1>Servidor de Aplicación</h1>
+<p>Servicio web público activo.</p>
+<hr>
+<h3>Dato obtenido de la máquina de datos (${ip_privada}):</h3>
+<blockquote>$DATO_PRIVADO</blockquote>
+HTML
